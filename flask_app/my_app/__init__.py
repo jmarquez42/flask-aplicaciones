@@ -1,10 +1,14 @@
 from flask import Flask
 from hello.views import hello
 from product.views import product_blueprint
+from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, template_folder='template', static_folder='static')
 app.register_blueprint(hello)
 app.register_blueprint(product_blueprint)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+db = SQLAlchemy(app)
 
 
 @app.template_filter('format_currency')
