@@ -5,6 +5,7 @@ from models import PRODUCTS
 
 product_blueprint = Blueprint('product', __name__)
 
+
 @product_blueprint.route('/')
 @product_blueprint.route('/home')
 def home():
@@ -20,7 +21,7 @@ def producto(key):
         abort(404)
     return render_template('product.html', product=product)
 
-
+# Crear formato como funciona
 @product_blueprint.context_processor
 def some_processor():
     def full_name(product):
