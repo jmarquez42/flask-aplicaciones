@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
 
-{% block container %}
-  <div class="top-pad">
-    {% for id, product in products.items() %}
-      <div class="well">
-        <h2>
 
-          <a href="{{ url_for('product.producto', key=id) }}">{{ product['name'] }}</a>
-          <small>$ {{ product['price'] }}</small>
-        </h2>
-      </div>
-    {% endfor %}
-  </div>
+
+{% block container %}
+<h1>Welcome to the Catalog Home</h1>
+<a href="{{ url_for('catalog.products') }}" id="catalog_link">
+Click here to see the catalogo
+</a>
+
+<script>
+  $(document).ready(function(){
+    $.getJSON("/home2", function(data) {
+      $('#catalog_link').append('<span class="badge">' + data.count + '</span>');
+      });
+  });
+</script>
 {% endblock %}
+
+
