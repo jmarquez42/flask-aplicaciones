@@ -1,8 +1,14 @@
 from flask import request, jsonify, Blueprint, render_template,render_template_string,flash,redirect,url_for
 from flask_app.my_app import db,app
-from flask_app.my_app.catalog.models import Product, Category
+from flask_app.my_app.catalog.models import Product, Category, ProductForm
 from flask.views import MethodView
+from werkzeug.utils import secure_filename
+from flask_app.my_app import ALLOWED_EXTENSIONS
+import os
 
+
+def allowed_file(filename):
+    return '.' in filename and filename.lower().rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 catalog = Blueprint('catalog', __name__)
 
@@ -70,20 +76,22 @@ def product(id):
 
 @catalog.route('/product-create', methods=['POST','GET'])
 def create_product():
+    form = ProductForm(request.form, csrf_enabled=False)
+    categories = [(c.id, c.name) for c in Category.query.all()]
+
+    form.category.choices = categories
     if request.method == 'POST':
         name = request.form.get('name')
         price = request.form.get('price')
-        categ_name = request.form.get('category')
+        category = Category.query.get_or_404(request.form.get('category'))
         company = request.form.get('company')
-        category = Category.query.filter_by(name = categ_name).first()
-        if not category:
-            category=Category(categ_name)
+
         product = Product(name=name, price=price,category=category,company=company)
         db.session.add(product)
         db.session.commit()
         flash('The product %s has been created' % name, 'info')
         return redirect(url_for('catalog.product', id=product.id))
-    return render_template('product-create.html')
+    return render_template('product-create.html',form=form)
 
 @catalog.route('/category-create', methods=['POST',])
 def create_category():
@@ -108,6 +116,9 @@ def categories():
                 'price': product.price
     }
     return jsonify(res)
+
+
+
 
 
 class GetPostRequest(MethodView):

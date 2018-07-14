@@ -4,15 +4,22 @@ from product.views import product_blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate,MigrateCommand
 from flask_script import Manager
+import os
 
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__, template_folder='template', static_folder='static')
 app.register_blueprint(hello)
 app.register_blueprint(product_blueprint)
 
+
 #Inicia la configuracion del SQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/usuario/Descargas/test1.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/user/Descargas/test1.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = os.path.realpath('.') + '/my_app/static/uploads'
+
+
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
